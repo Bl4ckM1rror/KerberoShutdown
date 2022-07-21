@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Bl4ckM1rror/KerberoShutdown/main/logo.PNG"> <br>
+  <img src="https://github.com/Bl4ckM1rror/KerberoShutdown/blob/master/logo.PNG"> <br>
 </p>
 
 # KerberoShutdown
