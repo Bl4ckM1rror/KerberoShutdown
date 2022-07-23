@@ -25,26 +25,23 @@ N.B.: it is currently under development, if you find bugs let me know.
 ```
 PS C:\> .\KerberoShutdown.exe --help
 
-  _  __         _                    _____ _           _      _
- | |/ /        | |                  / ____| |         | |    | |
- | ' / ___ _ __| |__   ___ _ __ ___| (___ | |__  _   _| |_ __| | _____      ___ __
- |  < / _ \ '__| '_ \ / _ \ '__/ _ \\___ \| '_ \| | | | __/ _` |/ _ \ \ /\ / / '_ \
- | . \  __/ |  | |_) |  __/ | | (_) |___) | | | | |_| | || (_| | (_) \ V  V /| | | |
- |_|\_\___|_|  |_.__/ \___|_|  \___/_____/|_| |_|\__,_|\__\__,_|\___/ \_/\_/ |_| |_|
+    _  __         _                    _____ _           _      _
+   | |/ /        | |                  / ____| |         | |    | |
+   | ' / ___ _ __| |__   ___ _ __ ___| (___ | |__  _   _| |_ __| | _____      ___ __
+   |  < / _ \ '__| '_ \ / _ \ '__/ _ \\___ \| '_ \| | | | __/ _` |/ _ \ \ /\ / / '_ \
+   | . \  __/ |  | |_) |  __/ | | (_) |___) | | | | |_| | || (_| | (_) \ V  V /| | | |
+   |_|\_\___|_|  |_.__/ \___|_|  \___/_____/|_| |_|\__,_|\__\__,_|\___/ \_/\_/ |_| |_|
 
                            v1.0 Powered by Bl4ckM1rror
 
-  --domainName        (Default: pentest.local) Domain to enumerate
-  --Root              (Default: C:\) Root folder
-  --groupName         (Default: Domain Admins) Local Group Name for Local Group Member Enumeration
   --GetWritableFiles  Enumerate all writable files on the target host
   --FindUnquotedsvc   Enumerate all unquoted services on the target host
-  --GetASREPRoastable Enumerate all AS-REP Roastable users
   --GetAllMembers     Enumerate all users (also within nested groups)
+  --GetASREPRoastable Enumerate all AS-REP Roastable users
   --DCSync            Enumerate all possible DCSync accounts
   --help              Display this help screen
 
-Example: 
+Example:
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
          .\KerberoShutdown.exe --GetAllMembers --groupName Domain Admins(with double quotes) --domainName pentest.local
