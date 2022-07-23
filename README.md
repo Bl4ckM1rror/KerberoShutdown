@@ -44,7 +44,7 @@ PS C:\> .\KerberoShutdown.exe --help
 Example:
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
-         .\KerberoShutdown.exe --GetAllMembers --groupName Domain Admins(with double quotes) --domainName pentest.local
+         .\KerberoShutdown.exe --GetAllMembers --groupName "Domain Admins" --domainName pentest.local
 
 ```
 
