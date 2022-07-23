@@ -10,10 +10,10 @@ The aim of developing this tool is to help me learn more about Active Directory 
 N.B.: it is currently under development, if you find bugs let me know.
 
 ## Enumeration
-* Finding AS-REP Roastable users
-* Finding Nested groups
+* Finding all group member (also within Nested groups)
 * Finding Unquoted Service paths
 * Finding Writable Files
+* Finding AS-REP Roastable accounts
 * Finding possible DCSync accounts
 
 ## TODO
@@ -44,14 +44,17 @@ PS C:\> .\KerberoShutdown.exe --help
   --DCSync            Enumerate all possible DCSync accounts
   --help              Display this help screen
 
-Example: .\KerberoShutdown.exe --domainName domain.local
+Example: 
+         .\KerberoShutdown.exe --FindUnquotedsvc
+         .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
+         .\KerberoShutdown.exe --GetAllMembers --groupName Domain Admins(with double quotes) --domainName pentest.local
 
 ```
 
 ## Changelog
 
 ##### v 1.0:
-    1. Added search for AS-REP Roastable users
+    1. Added search for AS-REP Roastable accounts
     2. Added search for Nested groups
     3. Added search for Unquoted Service paths
     4. Added search for Writable Files
