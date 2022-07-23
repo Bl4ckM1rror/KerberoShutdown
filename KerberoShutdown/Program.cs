@@ -24,31 +24,43 @@ namespace KerberoShutdown
             if (options == null) { Options.GetHelp(); return; }
 
             ChooseOption(options);
-
-            DisplayUtil.Done();
         }
 
         public static void ChooseOption(Options options)
         {
             if (options.FindUnquotedsvc)
             {
+                Kerbreak.InitializeSearch();
                 Kerbreak.FindUnquotedsvc();
+                DisplayUtil.Done();
             }
             else if (options.GetWritableFiles)
             {
+                Kerbreak.InitializeSearch();
                 Kerbreak.GetWritableFiles(options.Root, options.FileFormat);
+                DisplayUtil.Done();
             }
             else if (options.GetASREPRoastable)
             {
+                Kerbreak.InitializeSearch();
                 Kerbreak.GetASREPRoastable();
+                DisplayUtil.Done();
             }
             else if (options.GetAllMembers)
             {
+                Kerbreak.InitializeSearch();
                 Kerbreak.GetAllMembers(options.groupName, options.domainName);
+                DisplayUtil.Done();
             }
             else if (options.DCSync)
             {
+                Kerbreak.InitializeSearch();
                 Kerbreak.DCSync();
+                DisplayUtil.Done();
+            }
+            else
+            {
+                Options.GetHelp();
             }
         }
     }

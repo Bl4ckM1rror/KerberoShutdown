@@ -40,18 +40,19 @@ namespace KerberoShutdown
         public static void GetHelp()
         {
             var help = @"
-  --domainName        (Default: pentest.local) Domain to enumerate
-  --Root              (Default: C:\) Root folder
-  --groupName         (Default: Domain Admins) Local Group Name for Local Group Member Enumeration
   --GetWritableFiles  Enumerate all writable files on the target host
   --FindUnquotedsvc   Enumerate all unquoted services on the target host
-  --GetASREPRoastable Enumerate all AS-REP Roastable users 
   --GetAllMembers     Enumerate all users (also within nested groups)
+  --GetASREPRoastable Enumerate all AS-REP Roastable users 
   --DCSync            Enumerate all possible DCSync accounts
   --help              Display this help screen
 
 Example: .\KerberoShutdown.exe --help
-         .\KerberoShutdown.exe --domainName domain.local 
+         .\KerberoShutdown.exe --FindUnquotedsvc
+         .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
+         .\KerberoShutdown.exe --GetAllMembers --groupName Domain Admins(with double quotes) --domainName pentest.local
+
+
 ";
             System.Console.WriteLine(help);
 

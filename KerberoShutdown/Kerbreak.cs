@@ -14,11 +14,25 @@ using System.Threading;
 using System.Security.AccessControl;
 using System.Collections;
 using System.Security.Principal;
+using System.Linq;
 
 namespace KerberoShutdown
 {
     class Kerbreak
     {
+        public static void InitializeSearch()
+        {
+            Forest woods = Forest.GetCurrentForest();
+            DomainCollection domains = woods.Domains;
+            foreach (Domain domain in domains)
+            {
+                DisplayUtil.Print("\n[+] Enumeration for the Domain: " + domain.Name.ToString(), Enums.PrintColor.GREEN);
+                DomainController dc = domain.FindDomainController();
+                DisplayUtil.Print("[+] Domain Controller: " + dc.Name.ToString() + " ( DC-IP: " + dc.IPAddress.ToString() + " OS: " + dc.OSVersion.ToString() + " )", Enums.PrintColor.GREEN);
+                Console.WriteLine();
+            }
+        }
+
         public static void FindUnquotedsvc()
         {
             ServiceController[] scs = ServiceController.GetServices();
@@ -195,7 +209,7 @@ namespace KerberoShutdown
                 }
                 else if (group.StructuralObjectClass == "group")
                 {
-                    //Console.WriteLine("Group: {0} is memberOf {1} ", group.Name, groupName);
+                    Console.WriteLine("Group: {0} is member of {1} ", group.Name, groupName);
                     GetAllMembers(group.Name, domainName);
                 }
             }
