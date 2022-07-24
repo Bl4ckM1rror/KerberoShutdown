@@ -37,13 +37,17 @@ namespace KerberoShutdown
             else if (options.GetWritableFiles)
             {
                 Kerbreak.InitializeSearch();
-                Kerbreak.GetWritableFiles(options.Root, options.FileFormat);
+                Kerbreak.GetWritableFiles(options.root, options.fileFormat);
                 DisplayUtil.Done();
             }
             else if (options.GetASREPRoastable)
             {
                 Kerbreak.InitializeSearch();
-                Kerbreak.GetASREPRoastable();
+                try
+                {
+                    Kerbreak.GetASREPRoastable();
+                }
+                catch { }
                 DisplayUtil.Done();
             }
             else if (options.GetAllMembers)

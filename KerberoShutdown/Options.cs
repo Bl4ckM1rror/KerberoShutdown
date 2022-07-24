@@ -24,8 +24,8 @@ namespace KerberoShutdown
         [Option("GetAllMembers", Default = false, HelpText = "Enumerate all users (also within nested groups)")]
         public bool GetAllMembers { get; set; }
 
-        [Option("Root", Default = @"C:\", HelpText = "Root folder")]
-        public string Root { get; set; }
+        [Option("root", Default = @"C:\", HelpText = "Root folder")]
+        public string root { get; set; }
 
         [Option("groupName", Default = "Domain Admins", HelpText = "Local Group Name for Local Group Member Enumeration")]
         public string groupName { get; set; }
@@ -33,8 +33,8 @@ namespace KerberoShutdown
         [Option("domainName", Default = "pentest.local", HelpText = "Domain to enumerate")]
         public string domainName { get; set; }
 
-        [Option("FileFormat", Default = "*", HelpText = "File format to search")]
-        public string FileFormat { get; set; }
+        [Option("fileFormat", Default = @"*.dll", HelpText = "File format to search")]
+        public string fileFormat { get; set; }
 
 
         public static void GetHelp()
@@ -49,8 +49,10 @@ namespace KerberoShutdown
 
 Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --FindUnquotedsvc
-         .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
-         .\KerberoShutdown.exe --GetAllMembers --groupName Domain Admins(with double quotes) --domainName pentest.local
+         .\KerberoShutdown.exe --GetWritableFiles --root C:\ --fileFormat *.dll
+         .\KerberoShutdown.exe --GetAllMembers --groupName ''Domain Admins'' --domainName pentest.local
+         .\KerberoShutdown.exe --GetASREPRoastable
+         .\KerberoShutdown.exe --DCSync
 
 
 ";

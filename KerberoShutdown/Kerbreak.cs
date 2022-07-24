@@ -28,7 +28,7 @@ namespace KerberoShutdown
             {
                 DisplayUtil.Print("\n[+] Enumeration for the Domain: " + domain.Name.ToString(), Enums.PrintColor.GREEN);
                 DomainController dc = domain.FindDomainController();
-                DisplayUtil.Print("[+] Domain Controller: " + dc.Name.ToString() + " ( DC-IP: " + dc.IPAddress.ToString() + " OS: " + dc.OSVersion.ToString() + " )", Enums.PrintColor.GREEN);
+                DisplayUtil.Print("[+] Domain Controller: " + dc.Name.ToString() + " ( DC-IP: " + dc.IPAddress.ToString() + ", OS: " + dc.OSVersion.ToString() + " )", Enums.PrintColor.GREEN);
                 Console.WriteLine();
             }
         }
@@ -46,16 +46,14 @@ namespace KerberoShutdown
                 {
                     Console.WriteLine(s.ServiceName);
                     Console.WriteLine(path);
+                    Console.WriteLine();
                 }
             }
         }
 
         public string GetDCSyncUsers(string domainDN)
         {
-            string result;
-
             StringWriter sw = new StringWriter();
-
 
             Hashtable ht = new Hashtable();
             ht.Add("DS-Replication-Get-Changes", "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2");
@@ -78,9 +76,10 @@ namespace KerberoShutdown
 
                     AuthorizationRuleCollection arc = adpwn.GetAccessRules(true, true, typeof(NTAccount));
 
-
                     if (domainDN.Contains(temp.Name))
                     {
+                        sw.WriteLine("------------------------------------------");
+
                         foreach (ActiveDirectoryAccessRule a in arc)
                         {
                             foreach (DictionaryEntry d in ht)
@@ -90,7 +89,9 @@ namespace KerberoShutdown
                                     sw.WriteLine(a.IdentityReference);
                                     //sw.WriteLine(a.ObjectType);
                                     sw.WriteLine(d.Key.ToString());
-                                    sw.WriteLine(a.ActiveDirectoryRights);
+                                    //sw.WriteLine(a.ActiveDirectoryRights);
+                                    sw.WriteLine("------------------------------------------");
+                                    sw.WriteLine();
                                 }
                             }
                         }
@@ -100,8 +101,7 @@ namespace KerberoShutdown
             }
             catch { }
 
-            result = sw.ToString();
-            return result;
+            return sw.ToString();
         }
 
         public static void DCSync()
@@ -111,16 +111,13 @@ namespace KerberoShutdown
             DomainCollection domains = f.Domains;
             foreach (Domain d in domains)
             {
-
                 string domainName = d.Name.ToString();
-
 
                 string[] dn = domainName.Split('.');
                 for (int i = 0; i < dn.Length; i++)
                 {
                     dn[i] = "DC=" + dn[i];
                 }
-
                 string domainDN = String.Join(",", dn);
 
                 Kerbreak kerbreak = new Kerbreak();
@@ -130,7 +127,6 @@ namespace KerberoShutdown
             }
 
             Console.WriteLine(cmd);
-
         }
 
         public static void GetWritableFiles(string root, string fileformat)
@@ -150,6 +146,7 @@ namespace KerberoShutdown
                         {
                             FileStream fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
                             Console.WriteLine("Write Access on {0} ", filename);
+                            Console.WriteLine();
                         }
                         catch
                         {
@@ -190,7 +187,7 @@ namespace KerberoShutdown
                 foreach (SearchResult sr in ds.FindAll())
                 {
                     Console.WriteLine("User: {0} from Domain: {1}", sr.Properties["samaccountname"][0], domainName);
-                    Console.WriteLine("UserAccountControlsr {0}", sr.Properties["useraccountcontrol"][0]);
+                    Console.WriteLine("UserAccountControl: {0}", sr.Properties["useraccountcontrol"][0]);
                     Console.WriteLine();
                 }
 
