@@ -37,13 +37,13 @@ PS C:\> .\KerberoShutdown.exe --help
   --GetWritableFiles  Enumerate all writable files on the target host
   --FindUnquotedsvc   Enumerate all unquoted services on the target host
   --GetAllMembers     Enumerate all users (also within nested groups)
-  --GetASREPRoastable Enumerate all AS-REP Roastable users
+  --GetASREPRoastable Enumerate all AS-REP Roastable accounts
   --DCSync            Enumerate all possible DCSync accounts
   --help              Display this help screen
 
 Example:
          .\KerberoShutdown.exe --FindUnquotedsvc
-         .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
+         .\KerberoShutdown.exe --GetWritableFiles --root C:\ --fileFormat *.dll
          .\KerberoShutdown.exe --GetAllMembers --groupName "Domain Admins" --domainName pentest.local
          .\KerberoShutdown.exe --GetASREPRoastable
          .\KerberoShutdown.exe --DCSync
