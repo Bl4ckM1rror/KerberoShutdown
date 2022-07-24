@@ -45,7 +45,9 @@ Example:
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --Root C:\ --FileFormat *.dll
          .\KerberoShutdown.exe --GetAllMembers --groupName "Domain Admins" --domainName pentest.local
-
+         .\KerberoShutdown.exe --GetASREPRoastable
+         .\KerberoShutdown.exe --DCSync
+         
 ```
 
 ## Changelog
