@@ -40,6 +40,12 @@ namespace KerberoShutdown
                 Kerbreak.GetWritableFiles(options.root, options.fileFormat);
                 DisplayUtil.Done();
             }
+            else if (options.GetUACFlags)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.GetUACFlags(options.user);
+                DisplayUtil.Done();
+            }
             else if (options.GetASREPRoastable)
             {
                 Kerbreak.InitializeSearch();
@@ -62,6 +68,36 @@ namespace KerberoShutdown
                 Kerbreak.DCSync();
                 DisplayUtil.Done();
             }
+            else if (options.UnconstrainDeleg)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.GetUnconstrainedDelegation();
+                DisplayUtil.Done();
+            }
+            else if (options.ConstrainDeleg)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.GetConstrainedDelegation();
+                DisplayUtil.Done();
+            }
+            /*else if (options.RBCD)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.RBCD();
+                DisplayUtil.Done();
+            }
+            else if (options.ScanNoPAC)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.ScanNoPAC();
+                DisplayUtil.Done();
+            }
+            else if (options.HiddenAccountOnDC)
+            {
+                Kerbreak.InitializeSearch();
+                Kerbreak.HiddenAccountOnDC();
+                DisplayUtil.Done();
+            }*/
             else
             {
                 Options.GetHelp();

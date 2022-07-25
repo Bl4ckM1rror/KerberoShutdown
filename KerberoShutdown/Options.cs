@@ -12,6 +12,9 @@ namespace KerberoShutdown
         [Option("GetWritableFiles", Default = false, HelpText = "Enumerate all writable files on the target host")]
         public bool GetWritableFiles { get; set; }
 
+        [Option("GetUACFlags", Default = false, HelpText = "Enumerate all UAC flags of a specific user")]
+        public bool GetUACFlags { get; set; }
+
         [Option("FindUnquotedsvc", Default = false, HelpText = "Enumerate all unquoted services on the target host")]
         public bool FindUnquotedsvc { get; set; }
 
@@ -21,13 +24,25 @@ namespace KerberoShutdown
         [Option("GetASREPRoastable", Default = false, HelpText = "Enumerate all AS-REP Roastable users")]
         public bool GetASREPRoastable { get; set; }
 
+        [Option("UnconstrainDeleg", Default = false, HelpText = "Enumerate all Unconstrained Delegation accounts")]
+        public bool UnconstrainDeleg { get; set; }
+
+        [Option("ConstrainDeleg", Default = false, HelpText = "Enumerate all Constrained Delegation accounts")]
+        public bool ConstrainDeleg { get; set; }
+
+        [Option("RBCD", Default = false, HelpText = "Enumerate all Resource-based Constrained Delegation accounts")]
+        public bool RBCD { get; set; }
+
         [Option("GetAllMembers", Default = false, HelpText = "Enumerate all users (also within nested groups)")]
         public bool GetAllMembers { get; set; }
 
         [Option("root", Default = @"C:\", HelpText = "Root folder")]
         public string root { get; set; }
 
-        [Option("groupName", Default = "Domain Admins", HelpText = "Local Group Name for Local Group Member Enumeration")]
+        [Option("user", Default = "", HelpText = "User Account Name")]
+        public string user { get; set; }
+
+        [Option("groupName", Default = "Domain Admins", HelpText = "Local Group Name")]
         public string groupName { get; set; }
 
         [Option("domainName", Default = "pentest.local", HelpText = "Domain to enumerate")]
@@ -43,17 +58,24 @@ namespace KerberoShutdown
   --GetWritableFiles  Enumerate all writable files on the target host
   --FindUnquotedsvc   Enumerate all unquoted services on the target host
   --GetAllMembers     Enumerate all users (also within nested groups)
+  --GetUACFlags       Enumerate all UAC flags of a specific user
   --GetASREPRoastable Enumerate all AS-REP Roastable users 
   --DCSync            Enumerate all possible DCSync accounts
+  --UnconstrainDeleg  Enumerate all Unconstrained Delegation accounts
+  --ConstrainDeleg    Enumerate all Constrained Delegation accounts
+  --RBCD              Enumerate all Resource-based Constrained Delegation accounts
   --help              Display this help screen
 
 Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --root C:\ --fileFormat *.dll
-         .\KerberoShutdown.exe --GetAllMembers --groupName ''Domain Admins'' --domainName pentest.local
+         .\KerberoShutdown.exe --GetAllMembers --groupName ''Domain Admins'' --domainName <domain_name>
+         .\KerberoShutdown.exe --GetUACFlags --user <user_name>
          .\KerberoShutdown.exe --GetASREPRoastable
          .\KerberoShutdown.exe --DCSync
-
+         .\KerberoShutdown.exe --UnconstrainDeleg
+         .\KerberoShutdown.exe --ConstrainDeleg
+         .\KerberoShutdown.exe --RBCD
 
 ";
             System.Console.WriteLine(help);

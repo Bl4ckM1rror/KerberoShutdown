@@ -20,6 +20,7 @@ namespace KerberoShutdown
 {
     class Kerbreak
     {
+
         public static void InitializeSearch()
         {
             Forest woods = Forest.GetCurrentForest();
@@ -35,6 +36,9 @@ namespace KerberoShutdown
 
         public static void FindUnquotedsvc()
         {
+            DisplayUtil.Print("[*] Searching for Unquoted Services. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
             ServiceController[] scs = ServiceController.GetServices();
             foreach (ServiceController s in scs)
             {
@@ -48,6 +52,161 @@ namespace KerberoShutdown
                     Console.WriteLine(path);
                     Console.WriteLine();
                 }
+            }
+        }
+
+        public static void GetUnconstrainedDelegation()
+        {
+            DisplayUtil.Print("[*] Searching for Unonstrained Delegation accounts. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
+            //Fetching all domains
+            Forest woods = Forest.GetCurrentForest();
+            DomainCollection domains = woods.Domains;
+            foreach (Domain domain in domains)
+            {
+                //Console.WriteLine(domain.Name);
+                //pentest.local --> DC=pentest, DC=local
+                string domainName = domain.Name.ToString();
+                string[] dn = domainName.Split('.');
+
+                for (int i = 0; i < dn.Length; i++)
+                {
+                    dn[i] = "DC=" + dn[i];
+
+                }
+
+                //LDAP://DC=pentest,DC=local
+                System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry(String.Format("LDAP://{0}", String.Join(",", dn)));
+                DirectorySearcher ds = new DirectorySearcher();
+                List<string> Listflags = new List<string>();
+                ds.SearchRoot = de;
+
+                ds.Filter = "(&(objectclass=user)(useraccountcontrol>=524288))";
+
+                try
+                {
+                    foreach (SearchResult sr in ds.FindAll())
+                    {
+                        //Console.WriteLine("Account Name: {0} ", sr.Properties["samaccountname"][0]);
+                        //Console.WriteLine("UAC: {0} ", sr.Properties["useraccountcontrol"][0]);
+                        int uac = Convert.ToInt32(sr.Properties["useraccountcontrol"][0]);
+
+                        string temp;
+                        int count = 0;
+
+                        foreach (KeyValuePair<string, int> entry in Enums.DictFlags)
+                        {
+                            if ((uac - entry.Value) >= 0)
+                            {
+                                uac -= entry.Value;
+                                temp = entry.Key.ToLower();
+                                if (temp.Contains("deleg"))
+                                {
+                                    if (count == 0)
+                                    {
+                                        DisplayUtil.Print("[+] Account Name: " + sr.Properties["samaccountname"][0], Enums.PrintColor.GREEN);
+                                        count++;
+                                    }
+                                    Listflags.Add(entry.Key);
+                                }
+                            }
+                        }
+
+                        foreach (string f in Listflags)
+                        {
+                            Console.WriteLine("UAC flag: " + f);
+                        }
+                        Listflags.Clear();
+                        Console.WriteLine();
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void GetConstrainedDelegation()
+        {
+            DisplayUtil.Print("[*] Searching for Constrained Delegation accounts. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
+            string temp;
+            string temp2 ="";
+
+            Forest woods = Forest.GetCurrentForest();
+            DomainCollection domains = woods.Domains;
+            foreach (Domain domain in domains)
+            {
+                //Console.WriteLine(domain.Name);
+                //pentest.local --> DC=pentest, DC=local
+                string domainName = domain.Name.ToString();
+                string[] dn = domainName.Split('.');
+
+                for (int i = 0; i < dn.Length; i++)
+                {
+                    dn[i] = "DC=" + dn[i];
+
+                }
+
+                //LDAP://DC=pentest,DC=local
+                System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry(String.Format("LDAP://{0}", String.Join(",", dn)));
+                DirectorySearcher ds = new DirectorySearcher();
+                List<string> Listflags = new List<string>();
+                ds.SearchRoot = de;
+
+                ds.Filter = "(objectclass=user)";
+                
+                try
+                {
+                    foreach (SearchResult sr in ds.FindAll())
+                    {
+                        int uac = Convert.ToInt32(sr.Properties["useraccountcontrol"][0]);
+                        int count = 0;
+
+                        if (sr.Properties["msds-allowedtodelegateto"].Count > 0)
+                        {
+                            foreach (KeyValuePair<string, int> entry in Enums.DictFlags)
+                            {
+                                if ((uac - entry.Value) >= 0)
+                                {
+                                    uac -= entry.Value;
+                                    temp = entry.Key.ToLower();
+                                    if (temp.Contains("deleg"))
+                                    {
+                                        if (count == 0)
+                                        {
+                                            DisplayUtil.Print("[+] Account Name: " + sr.Properties["samaccountname"][0], Enums.PrintColor.GREEN);
+                                            count++;
+                                            temp2 = temp;
+                                        }
+                                        Listflags.Add(entry.Key);
+                                    }
+                                }
+                            }
+
+                            if (temp2.Contains("deleg"))
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine("msds-allowedtodelegateto: ");
+                                for (int i = 0; i < sr.Properties["msds-allowedtodelegateto"].Count; i++)
+                                {
+                                    Console.WriteLine(sr.Properties["msds-allowedtodelegateto"][i] + ",");
+                                }
+
+                                foreach (string f in Listflags)
+                                {
+                                    Console.WriteLine("UAC flag: " + f);
+                                }
+                                Listflags.Clear();
+                                Console.WriteLine();
+
+                            }
+
+                            temp2 = "";
+                        }
+                    }
+                }
+                catch { }
             }
         }
 
@@ -106,6 +265,9 @@ namespace KerberoShutdown
 
         public static void DCSync()
         {
+            DisplayUtil.Print("[*] Searching for DCSync accounts. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
             string cmd = "";
             Forest f = Forest.GetCurrentForest();
             DomainCollection domains = f.Domains;
@@ -131,6 +293,9 @@ namespace KerberoShutdown
 
         public static void GetWritableFiles(string root, string fileformat)
         {
+            DisplayUtil.Print("[*] Searching for writable files. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
             var dirs = Directory.EnumerateDirectories(root);
             foreach (string dir in dirs)
             {
@@ -161,8 +326,77 @@ namespace KerberoShutdown
 
         }
 
+        public static void GetUACFlags(string username)
+        {
+            Options opt = new Options();
+            opt.user = username;
+            DisplayUtil.Print("[*] Searching all UAC flags of the user account " + opt.user + ". .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
+            bool find = false;
+            Forest woods = Forest.GetCurrentForest();
+            DomainCollection domains = woods.Domains;
+            foreach (Domain domain in domains)
+            {
+                //Console.WriteLine(domain.Name);
+                //pentest.local --> DC=pentest, DC=local
+                string domainName = domain.Name.ToString();
+               
+                string[] dn = domainName.Split('.');
+
+                for (int i = 0; i < dn.Length; i++)
+                {
+                    dn[i] = "DC=" + dn[i];
+                }
+
+                //LDAP://DC=pentest,DC=local
+                System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry(String.Format("LDAP://{0}", String.Join(",", dn)));
+                DirectorySearcher ds = new DirectorySearcher();
+                List<string> Listflags = new List<string>();
+                ds.SearchRoot = de;
+
+                ds.Filter = "(objectclass=user)";
+
+                try
+                {
+                    foreach (SearchResult sr in ds.FindAll())
+                    {
+                        if (sr.Properties["samaccountname"][0].Equals(opt.user))
+                        {
+                            find = true;
+                            DisplayUtil.Print("[+] Account Name: " + sr.Properties["samaccountname"][0], Enums.PrintColor.GREEN);
+                            int uac = Convert.ToInt32(sr.Properties["useraccountcontrol"][0]);
+
+                            foreach (KeyValuePair<string, int> entry in Enums.DictFlags)
+                            {
+                                if ((uac - entry.Value) >= 0)
+                                {
+                                    uac -= entry.Value;
+                                    Listflags.Add(entry.Key);
+                                }
+                            }
+
+                            Console.WriteLine();
+                            foreach (string f in Listflags)
+                            {
+                                Console.WriteLine("UAC flag: " + f);
+                            }
+                        }
+                    }
+                    if (!find)
+                        DisplayUtil.Print("\n[-] Invalid User ", Enums.PrintColor.RED);
+                }
+                catch {
+                    DisplayUtil.Print("\n[-] Invalid User ", Enums.PrintColor.RED);
+                } 
+            }
+        }
+
         public static void GetASREPRoastable()
         {
+            DisplayUtil.Print("[*] Searching for AS-REP Roastable accounts. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
             //Fetching all domains
             Forest woods = Forest.GetCurrentForest();
             DomainCollection domains = woods.Domains;
@@ -196,19 +430,29 @@ namespace KerberoShutdown
 
         public static void GetAllMembers(string groupName, string domainName)
         {
-            PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName);
-            GroupPrincipal gp = GroupPrincipal.FindByIdentity(pc, groupName);
-            foreach (Principal group in gp.GetMembers())
+            DisplayUtil.Print("[*] Searching for all members of the group " + groupName + ". .", Enums.PrintColor.RED);
+            Console.WriteLine();
+
+            try
             {
-                if (group.StructuralObjectClass == "user")
+                PrincipalContext pc = new PrincipalContext(ContextType.Domain, domainName);
+                GroupPrincipal gp = GroupPrincipal.FindByIdentity(pc, groupName);
+
+                foreach (Principal group in gp.GetMembers())
                 {
-                    Console.WriteLine("User: {0} ", group.Name);
+                    if (group.StructuralObjectClass == "user")
+                    {
+                        Console.WriteLine("User: {0} ", group.Name);
+                    }
+                    else if (group.StructuralObjectClass == "group")
+                    {
+                        Console.WriteLine("Group: {0} is member of {1} ", group.Name, groupName);
+                        GetAllMembers(group.Name, domainName);
+                    }
                 }
-                else if (group.StructuralObjectClass == "group")
-                {
-                    Console.WriteLine("Group: {0} is member of {1} ", group.Name, groupName);
-                    GetAllMembers(group.Name, domainName);
-                }
+            }
+            catch {
+                DisplayUtil.Print("\n[-] Invalid Group Name or Domain Name", Enums.PrintColor.RED);
             }
         }
     }
