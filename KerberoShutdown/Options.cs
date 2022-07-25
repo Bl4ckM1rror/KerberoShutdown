@@ -68,7 +68,7 @@ namespace KerberoShutdown
 Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --root C:\ --fileFormat *.dll
-         .\KerberoShutdown.exe --GetAllMembers --groupName ''Domain Admins'' --domainName <domain_name>
+         .\KerberoShutdown.exe --GetAllMembers --groupName <group_name> --domainName <domain_name>
          .\KerberoShutdown.exe --GetUACFlags --user <user_name>
          .\KerberoShutdown.exe --GetASREPRoastable
          .\KerberoShutdown.exe --DCSync
