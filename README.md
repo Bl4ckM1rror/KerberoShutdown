@@ -64,7 +64,7 @@ Example: .\KerberoShutdown.exe --help
 ##### v 1.1:
     1. Added search for Unconstrained Delegation accounts
     2. Added search for Constrained Delegation accounts
-    3. Added search for  all UAC flags of a specific user
+    3. Added search for all UAC flags of a specific user
     4. Fixed generic bugs
 
 ##### v 1.0:
