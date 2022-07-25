@@ -16,7 +16,7 @@ namespace KerberoShutdown
             Console.WriteLine(@"   | . \  __/ |  | |_) |  __/ | | (_) |___) | | | | |_| | || (_| | (_) \ V  V /| | | | ");
             Console.WriteLine(@"   |_|\_\___|_|  |_.__/ \___|_|  \___/_____/|_| |_|\__,_|\__\__,_|\___/ \_/\_/ |_| |_| ");
             Console.WriteLine();
-            Console.WriteLine("                           v1.0 Powered by Bl4ckM1rror                                  ");
+            Console.WriteLine("                           v1.1 Powered by Bl4ckM1rror                                  ");
             Console.WriteLine();
         }
 
