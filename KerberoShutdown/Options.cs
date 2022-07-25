@@ -63,7 +63,6 @@ namespace KerberoShutdown
   --DCSync            Enumerate all possible DCSync accounts
   --UnconstrainDeleg  Enumerate all Unconstrained Delegation accounts
   --ConstrainDeleg    Enumerate all Constrained Delegation accounts
-  --RBCD              Enumerate all Resource-based Constrained Delegation accounts
   --help              Display this help screen
 
 Example: .\KerberoShutdown.exe --help
@@ -75,7 +74,6 @@ Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --DCSync
          .\KerberoShutdown.exe --UnconstrainDeleg
          .\KerberoShutdown.exe --ConstrainDeleg
-         .\KerberoShutdown.exe --RBCD
 
 ";
             System.Console.WriteLine(help);
