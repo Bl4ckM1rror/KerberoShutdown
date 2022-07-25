@@ -9,10 +9,10 @@ All you need to have is a machine joined on the Domain.
 
 The aim of developing this tool is to help me learn more about Active Directory Security(ADS). 
 
-[*] it is currently under development, if you find bugs let me know.
+[*] it is currently under development, if you find bugs let me know. [*]
 
 ## Enumeration
-* Finding all group member (also within Nested groups)
+* Finding all group members (also within Nested groups)
 * Finding Unquoted Service paths
 * Finding Writable Files
 * Finding all UAC flags of a specific user
