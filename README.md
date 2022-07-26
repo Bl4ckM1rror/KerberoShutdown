@@ -20,9 +20,11 @@ The aim of developing this tool is to help me learn more about Active Directory 
 * Finding possible DCSync accounts
 * Finding Unconstrained Delegation accounts
 * Finding Constrained Delegation accounts
+* Finding Resource Based Constrained Delegation accounts
+* Create Hidden Domain Admin account on Domain Controller (for Persistence purpose)
 
 ## TODO
-* Finding Resource Based Constrained Delegation accounts
+* Scan for sAMAccountName spoofing
 
 ## Usage
 ```
@@ -45,9 +47,10 @@ PS C:\> .\KerberoShutdown.exe --help
   --DCSync            Enumerate all possible DCSync accounts
   --UnconstrainDeleg  Enumerate all Unconstrained Delegation accounts
   --ConstrainDeleg    Enumerate all Constrained Delegation accounts
-  --help              Display this help screen
-
-Example: .\KerberoShutdown.exe --help
+  --RBCD              Enumerate all Resource-based Constrained Delegation accounts
+  --HiddenDA          Create Hidden Domain Admin account on Domain Controller
+ 
+Example: 
          .\KerberoShutdown.exe --FindUnquotedsvc
          .\KerberoShutdown.exe --GetWritableFiles --root C:\ --fileFormat *.dll
          .\KerberoShutdown.exe --GetAllMembers --groupName <group_name> --domainName <domain_name>
@@ -56,6 +59,8 @@ Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --DCSync
          .\KerberoShutdown.exe --UnconstrainDeleg
          .\KerberoShutdown.exe --ConstrainDeleg
+         .\KerberoShutdown.exe --RBCD --domainName <domain_name>
+         .\KerberoShutdown.exe --HiddenDA --da <fake_domain_admin> --password <password_value>
          
 ```
 
@@ -65,7 +70,9 @@ Example: .\KerberoShutdown.exe --help
     1. Added search for Unconstrained Delegation accounts
     2. Added search for Constrained Delegation accounts
     3. Added search for all UAC flags of a specific user
-    4. Fixed generic bugs
+    4. Added search for Resource-based Constrained Delegation accounts
+    5. Added feature for create hidden Domain Account
+    6. Fixed generic bugs
 
 ##### v 1.0:
     1. Added search for AS-REP Roastable accounts
