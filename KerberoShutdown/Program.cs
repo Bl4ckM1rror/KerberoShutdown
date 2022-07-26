@@ -80,24 +80,24 @@ namespace KerberoShutdown
                 Kerbreak.GetConstrainedDelegation();
                 DisplayUtil.Done();
             }
-            /*else if (options.RBCD)
+            else if (options.RBCD)
             {
                 Kerbreak.InitializeSearch();
-                Kerbreak.RBCD();
+                Kerbreak.RBCD(options.domainName);
                 DisplayUtil.Done();
             }
-            else if (options.ScanNoPAC)
+            /*else if (options.ScanNoPAC)
             {
                 Kerbreak.InitializeSearch();
                 Kerbreak.ScanNoPAC();
                 DisplayUtil.Done();
-            }
-            else if (options.HiddenAccountOnDC)
+            }*/
+            else if (options.HiddenDA)
             {
                 Kerbreak.InitializeSearch();
-                Kerbreak.HiddenAccountOnDC();
+                Kerbreak.HiddenAccountOnDC(options.da, options.password);
                 DisplayUtil.Done();
-            }*/
+            }
             else
             {
                 Options.GetHelp();

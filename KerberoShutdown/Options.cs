@@ -33,6 +33,9 @@ namespace KerberoShutdown
         [Option("RBCD", Default = false, HelpText = "Enumerate all Resource-based Constrained Delegation accounts")]
         public bool RBCD { get; set; }
 
+        [Option("HiddenDA", Default = false, HelpText = "Create Hidden Domain Admin account on Domain Controller")]
+        public bool HiddenDA { get; set; }
+
         [Option("GetAllMembers", Default = false, HelpText = "Enumerate all users (also within nested groups)")]
         public bool GetAllMembers { get; set; }
 
@@ -41,6 +44,12 @@ namespace KerberoShutdown
 
         [Option("user", Default = "", HelpText = "User Account Name")]
         public string user { get; set; }
+
+        [Option("da", Default = "", HelpText = "Fake Domain Admin Name")]
+        public string da { get; set; }
+
+        [Option("password", Default = "", HelpText = "Domain Admin Password")]
+        public string password { get; set; }
 
         [Option("groupName", Default = "Domain Admins", HelpText = "Local Group Name")]
         public string groupName { get; set; }
@@ -63,6 +72,8 @@ namespace KerberoShutdown
   --DCSync            Enumerate all possible DCSync accounts
   --UnconstrainDeleg  Enumerate all Unconstrained Delegation accounts
   --ConstrainDeleg    Enumerate all Constrained Delegation accounts
+  --RBCD              Enumerate all Resource-based Constrained Delegation accounts
+  --HiddenDA          Create Hidden Domain Admin account on Domain Controller
   --help              Display this help screen
 
 Example: .\KerberoShutdown.exe --help
@@ -74,6 +85,9 @@ Example: .\KerberoShutdown.exe --help
          .\KerberoShutdown.exe --DCSync
          .\KerberoShutdown.exe --UnconstrainDeleg
          .\KerberoShutdown.exe --ConstrainDeleg
+         .\KerberoShutdown.exe --RBCD --domainName <domain_name>
+         .\KerberoShutdown.exe --HiddenDA --da <fake_domain_admin> --password <password_value>
+
 
 ";
             System.Console.WriteLine(help);
