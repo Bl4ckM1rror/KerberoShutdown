@@ -1,8 +1,9 @@
+# :skull: KerberoShutdown :zap:
 <p align="center">
   <img src="https://github.com/Bl4ckM1rror/KerberoShutdown/blob/master/logo.PNG"> <br>
 </p>
 
-# :skull: KerberoShutdown :zap:
+# Introduction
 KerberoShutdown is an Active Directory Recon tool that enumerates misconfigurations in the AD environment to identify possible attack vectors.
 
 All you need to have is a machine joined on the Domain.
